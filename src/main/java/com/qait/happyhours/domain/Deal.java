@@ -17,6 +17,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 @Entity
 @Table(name = "deal")
 public class Deal implements Serializable {
@@ -55,12 +59,14 @@ public class Deal implements Serializable {
 	@Column(name = "mainImage", unique = false, nullable = false)
 	private String dealMainImage;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "deal_id")
+	@Fetch(FetchMode.JOIN)
 	private Set<DealOffers> dealOffersList;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "deal_id")
+	@Fetch(FetchMode.JOIN)
 	private Set<DealImages> dealImagesList;
 
 	@Column(name = "start_date", columnDefinition = "DATETIME")

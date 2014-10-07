@@ -22,7 +22,9 @@ public class DealServiceImpl implements DealService {
 
 	@Override
 	public List<Deal> getAllActiveDealsList() {
-		return dealDao.getAllActiveDealsList();
+		List<Deal> dealList = null;
+		dealList = dealDao.getAllActiveDealsList();
+		return dealList;
 	}
 
 	@Override

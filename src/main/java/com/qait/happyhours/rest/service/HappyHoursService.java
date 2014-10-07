@@ -2,6 +2,7 @@ package com.qait.happyhours.rest.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -18,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.qait.happyhours.domain.Deal;
+import com.qait.happyhours.domain.DealImages;
 import com.qait.happyhours.domain.User;
 import com.qait.happyhours.dto.SendPasswordDTO;
 import com.qait.happyhours.enums.EmailType;
@@ -40,27 +42,6 @@ public class HappyHoursService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String text() {
-		 
-		Deal deal=new Deal();
-		deal.setLatitude(28.585148);
-		deal.setLongitude(77.311413);
-		deal.setRequiredDistance((double) 100);
-		/*return searchDealByGeoLocation(s, deal);*/
-		/*Deal deal=new Deal();
-		deal.setTitle("Brand New Car");
-		deal.setDescription("You can win brand new car, thats it");
-		deal.setLocation("UAE");
-		deal.setLatitude(28.578383);
-		deal.setLongitude(77.317507);
-		deal.setOriginalPrice("50000");
-		deal.setNewPrice("900");
-		deal.setDiscount("50");
-		deal.setDealMainImage("/brand/images.jpg");
-		deal.setStartDate(new Date());
-		deal.setEndDate(new Date());
-		deal.setDealType(true);
-		deal.setIsExpired(false);
-		saveDeal(deal);*/
 		return "Its working";
 	}
 
@@ -69,8 +50,6 @@ public class HappyHoursService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response registerUser(User user) {
-		
-		System.out.println("login hit user data is :" + user);
 		UserService userService = (UserService) appContext.getBean("userService");
 		return userService.saveUser(user);
 	}
@@ -122,85 +101,54 @@ public class HappyHoursService {
 	@Path("search-deal")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchDeal(@QueryParam("dealString") String searchStr) {
-		
-		HappyHoursServiceResponse response = new HappyHoursServiceResponse();
+	public Response searchDeal(@QueryParam("searchString") String searchStr) {
 		
 		DealService dealService = (DealService) appContext.getBean("dealService");
-		
-		UserService userService = (UserService) appContext.getBean("userService");
-		
-		/*Boolean isAuthorized=userService.checkAuthorizationByToken(authorizationValue);*/
-		
-		/*if(isAuthorized){*/
 			
 		List<Deal> dealList = dealService.getMatchingDealsBySearchStr(searchStr);
-
-		return Response.status(200).entity(dealList).build();
 		
-		/*}else{
-			
-			response.setCode("authorizationToken001");
-			response.setMessage(HappyHoursPropertiesFileReaderUtil.getPropertyValue("authorizationToken001"));
-			return Response.status(200).entity(response).build();
-		}*/
+		for(Deal deal : dealList) {
+			deal.setDealMainImage(HappyHoursUtil.appendServerUrlToPath(deal.getDealMainImage()));
+			Set<DealImages> dealImagesList = deal.getDealImagesList();
+			for (DealImages dealImages : dealImagesList) {
+				dealImages.setImage(HappyHoursUtil
+						.appendServerUrlToPath(dealImages.getImage()));
+			}
+		}
+		return Response.status(200).entity(dealList).build();
 	}
 	
-	@GET
+	@POST
 	@Path("geo-search-deal")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response searchDealByGeoLocation(Deal dealDTO) {
 		
-		HappyHoursServiceResponse response = new HappyHoursServiceResponse();
 		DealService dealService = (DealService) appContext
 				.getBean("dealService");
-		
-		UserService userService = (UserService) appContext
-				.getBean("userService");
-		
-		/*Boolean isAuthorized=userService.checkAuthorizationByToken(authorizationValue);*/
-		Boolean isAuthorized=true;
-		
-		if(isAuthorized){
-		List<Deal> dealList=new ArrayList<Deal>();
+
+		List<Deal> dealList = new ArrayList<Deal>();
 		List<Deal> allDealList = dealService.getAllActiveDealsList();
-		
-		for (Deal deal2 : allDealList) {
-			Double distance=distance(dealDTO.getLatitude(),dealDTO.getLongitude(),deal2.getLatitude(),deal2.getLongitude());
-			if(distance < dealDTO.getRequiredDistance()){
-				deal2.setRelativeDistance(distance);
-				dealList.add(deal2);
+
+		for (Deal deal : allDealList) {
+			
+			Double distance = HappyHoursUtil.distance(
+					dealDTO.getLatitude(), dealDTO.getLongitude(),
+					deal.getLatitude(), deal.getLongitude());
+			
+			if (distance < dealDTO.getRequiredDistance()) {
+				deal.setRelativeDistance(distance);
+				deal.setDealMainImage(HappyHoursUtil.appendServerUrlToPath(deal.getDealMainImage()));
+				Set<DealImages> dealImagesList = deal.getDealImagesList();
+				for (DealImages dealImages : dealImagesList) {
+					dealImages.setImage(HappyHoursUtil
+							.appendServerUrlToPath(dealImages.getImage()));
+				}
+				dealList.add(deal);
 			}
 		}
 
 		return Response.status(200).entity(dealList).build();
-		
-		}else{
-			
-			response.setCode("authorizationToken001");
-			response.setMessage(HappyHoursPropertiesFileReaderUtil
-					.getPropertyValue("authorizationToken001"));
-			return Response.status(200).entity(response).build();
-			
-		}
-	}
-
-
-	private Double distance(Double latitude, Double longitude, Double latitude2,
-			Double longitude2) {
-		Long R = (long) 6371; // km
-	    Double dLat = (latitude2 - latitude) * Math.PI / 180;
-	    Double dLon = (longitude2 - longitude) * Math.PI / 180;
-	    Double lat1 = latitude * Math.PI / 180;
-	    Double lat2 = latitude2 * Math.PI / 180;
-	 
-	    Double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-	            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-	    Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-	    Double d = (Double)(R * c);
-	    /*Double m = d * 0.621371;*/
-		return d;
 	}
 
 	/**

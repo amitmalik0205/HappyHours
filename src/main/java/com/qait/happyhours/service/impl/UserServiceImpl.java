@@ -26,10 +26,13 @@ public class UserServiceImpl implements UserService {
 
 	public Response saveUser(User user) {
 		HappyHoursServiceResponse response = new HappyHoursServiceResponse();
+		
 		user.setToken(HappyHoursUtil.getAuthToken());
 		response.setCode("rsgisterUser001");
+		
 		String status = HappyHoursPropertiesFileReaderUtil
 				.getPropertyValue("rsgisterUser001");
+		
 		if (userDao.getUserByUserId(user.getUserName()) != null) {
 			response.setCode("rsgisterUser003");
 			status = HappyHoursPropertiesFileReaderUtil

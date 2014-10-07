@@ -78,7 +78,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
 		User user = null;
 		try {
 			session = getSessionFactory().openSession();
-			String queryString = "from User where userID = :userId and password = :pwd";
+			String queryString = "from User where userName = :userId and password = :pwd";
 			Query query = session.createQuery(queryString);
 			query.setString("userId", userId);
 			query.setString("pwd", password);
