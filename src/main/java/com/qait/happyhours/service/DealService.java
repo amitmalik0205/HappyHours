@@ -11,5 +11,6 @@ public interface DealService {
 	List<Deal> getAllActiveDealsList();
 
 	boolean saveDeal(Deal deal);
-
+	
+	public Deal getDealByID(Long dealID);
 }

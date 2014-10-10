@@ -7,13 +7,9 @@ public class SearchDeal {
 
 	public static void main(String[] args) throws JAXBException, IOException {
 		
-		String url = "http://localhost:8081/happyhours/rest/happy-hours-service/search-deal?searchString=offer";
+		String url = "http://localhost:8081/happyhours/rest/happy-hours-service/search-deal?searchString=dubai";
 	
 		TestUtil.sendRequest(url, "", "GET");
 		
 	}
-
-
-
-
 }

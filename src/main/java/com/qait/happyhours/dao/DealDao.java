@@ -12,4 +12,5 @@ public interface DealDao {
 
 	boolean saveDeal(Deal deal);
 
+	Deal getDealByID(Long dealID);
 }

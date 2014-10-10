@@ -79,7 +79,6 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -171,6 +170,13 @@
 		<!-- Servlet and jsp -->
 
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.1</version>
@@ -209,35 +215,26 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-
-		<!-- <dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>1.8</version>
-		</dependency>
-
+		
+		<!-- Jersey Server -->
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>1.8</version>
-		</dependency>
-
+		   <groupId>org.glassfish.jersey.containers</groupId>
+		   <artifactId>jersey-container-servlet-core</artifactId>
+		   <version>2.12</version>
+		  </dependency>
+		  
+		  <dependency>
+		      <groupId>org.glassfish.jersey.media</groupId>
+		      <artifactId>jersey-media-json-jackson</artifactId>
+		      <version>2.12</version>
+		  </dependency>
+		
+		<!-- Jersey File Upload -->
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.8</version>
-		</dependency> -->
-<dependency>
-   <groupId>org.glassfish.jersey.containers</groupId>
-   <artifactId>jersey-container-servlet-core</artifactId>
-   <version>2.12</version>
-  </dependency>
-  
-  <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-json-jackson</artifactId>
-      <version>2.12</version>
-  </dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>2.12</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-codec</groupId>

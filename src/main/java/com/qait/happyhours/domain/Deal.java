@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,7 +16,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -35,7 +33,7 @@ public class Deal implements Serializable {
 	@Column(name = "title", nullable = false)
 	private String title;
 
-	@Column(name = "description", nullable = false)
+	@Column(name = "description", nullable = false, columnDefinition = "length=1000")
 	private String description;
 
 	@Column(name = "location", nullable = false)
@@ -56,8 +54,11 @@ public class Deal implements Serializable {
 	@Column(name = "discount", nullable = false)
 	private String discount;
 
-	@Column(name = "mainImage", unique = false, nullable = false)
+	@Column(name = "mainImage")
 	private String dealMainImage;
+	
+	@Column(name = "subTitle")
+	private String subTitle;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "deal_id")
@@ -233,4 +234,11 @@ public class Deal implements Serializable {
 		this.isExpired = isExpired;
 	}
 
+	public String getSubTitle() {
+		return subTitle;
+	}
+
+	public void setSubTitle(String subTitle) {
+		this.subTitle = subTitle;
+	}
 }

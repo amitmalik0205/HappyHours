@@ -1,13 +1,17 @@
 package com.qait.happyhours.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
-
-import com.qait.happyhours.domain.Deal;
 
 public class HappyHoursUtil {
 
@@ -54,5 +58,49 @@ public class HappyHoursUtil {
 	public static String appendServerUrlToPath(String path) {
 		return HappyHoursPropertiesFileReaderUtil.getApplicationProperty("server.url")
 				+ "/" + path;
+	}
+	
+	public static String uploadImageOnServer(InputStream in, Long dealID) throws IOException, FileNotFoundException {
+
+		FileOutputStream fOut = null;
+		Date date = new Date();
+
+		// Make root folder to save images if not there.
+		String rootFolderPath = createRootFolder();
+		
+		// Make deal folder to save images if not there.
+		String dealFolderPath = rootFolderPath + "/" + dealID.toString();
+		createDealFolder(dealFolderPath);
+		
+		String convertedImageName = (new Long(date.getTime())).toString()+ ".jpg";
+		
+		String storagePath = dealFolderPath + "/" + convertedImageName;
+		
+		fOut = new FileOutputStream(storagePath);
+
+		byte[] buf = new byte[1024];
+		int len;
+
+		while ((len = in.read(buf)) > 0) {
+			fOut.write(buf, 0, len);
+		}
+
+		in.close();
+		fOut.close();
+
+		return convertedImageName;
+	}
+	
+	private static String createRootFolder() {
+		String rootFolderPath = HappyHoursPropertiesFileReaderUtil.getApplicationProperty("deal.image.storage.path");
+		File rootFolder = new File(rootFolderPath);
+		rootFolder.mkdirs();
+		return rootFolderPath;
+	}
+	
+	private static File createDealFolder(String dealFolderPath) {
+		File dealFolder = new File(dealFolderPath);
+		dealFolder.mkdirs();
+		return dealFolder;
 	}
 }

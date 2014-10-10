@@ -29,8 +29,11 @@ public class DealServiceImpl implements DealService {
 
 	@Override
 	public boolean saveDeal(Deal deal) {
-		// TODO Auto-generated method stub
 		return dealDao.saveDeal(deal);
 	}
 
+	@Override
+	public Deal getDealByID(Long dealID) {
+		return dealDao.getDealByID(dealID);
+	}
 }

@@ -1,12 +1,12 @@
 package com.qait.happyhours.rest.service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -206,7 +208,6 @@ public class HappyHoursService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveDeal(Deal deal) {
 		
-		System.out.println("Deal data is :" + deal);
 		HappyHoursServiceResponse response = new HappyHoursServiceResponse();
 		DealService dealService = (DealService) appContext.getBean("dealService");
 		
@@ -214,12 +215,76 @@ public class HappyHoursService {
 		String status = HappyHoursPropertiesFileReaderUtil
 				.getPropertyValue("saveDeal001");
 		if (!dealService.saveDeal(deal)) {
-
 			response.setCode("saveDeal002");
 			status = HappyHoursPropertiesFileReaderUtil
 					.getPropertyValue("saveDeal002");
 		}
 		response.setMessage(status);
+		return Response.status(200).entity(response).build();
+	}
+
+	@POST
+	@Path("/uploadImage")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveImage(@FormDataParam("file") InputStream ins,
+			@FormDataParam("file") FormDataContentDisposition desDisposition,
+			@FormDataParam("dealID") Long dealID,
+			@FormDataParam("mainImage") boolean isMainImage) {
+
+		boolean isError = false;
+		String imageName = null;
+
+		String rootFolderPath = HappyHoursPropertiesFileReaderUtil
+				.getApplicationProperty("deal.image.public.url");
+		HappyHoursServiceResponse response = new HappyHoursServiceResponse();
+
+		DealService dealService = (DealService) appContext
+				.getBean("dealService");
+
+		try {
+
+			imageName = HappyHoursUtil.uploadImageOnServer(ins, dealID);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			isError = true;
+			response.setMessage(HappyHoursPropertiesFileReaderUtil
+					.getPropertyValue("imageUpload002"));
+			response.setCode("imageUpload002");
+		}
+
+		if (!isError) {
+
+			Deal savedDeal = dealService.getDealByID(dealID);
+
+			if (isMainImage == false) {
+
+				Set<DealImages> dealImagesList = savedDeal.getDealImagesList();
+				DealImages dealImage = new DealImages();
+				dealImage.setImage(rootFolderPath + "/" + dealID.toString()
+						+ "/" + imageName);
+				dealImagesList.add(dealImage);
+
+			} else {
+
+				savedDeal.setDealMainImage(rootFolderPath + "/"
+						+ dealID.toString() + "/" + imageName);
+			}
+
+			boolean dealSaved = dealService.saveDeal(savedDeal);
+
+			if (dealSaved) {
+				response.setMessage(HappyHoursPropertiesFileReaderUtil
+						.getPropertyValue("imageUpload001"));
+				response.setCode("imageUpload001");
+			} else {
+				response.setMessage(HappyHoursPropertiesFileReaderUtil
+						.getPropertyValue("imageUpload002"));
+				response.setCode("imageUpload002");
+			}
+		}
+
 		return Response.status(200).entity(response).build();
 	}
 }

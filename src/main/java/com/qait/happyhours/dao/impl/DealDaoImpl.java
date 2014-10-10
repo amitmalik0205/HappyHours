@@ -83,4 +83,20 @@ public class DealDaoImpl extends GenericDaoImpl<User, Long> implements DealDao {
 		}
 		return dealSaved;
 	}
+	
+	@Override
+	public Deal getDealByID(Long dealID) {
+		Deal deal = null;
+		Session session = null;
+		try {
+			session = getSessionFactory().openSession();
+			deal = (Deal)session.get(Deal.class, dealID);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.fatal(HappyHoursUtil.getExceptionDescriptionString(e));
+		} finally {
+			session.close();
+		}
+		return deal;
+	}
 }
