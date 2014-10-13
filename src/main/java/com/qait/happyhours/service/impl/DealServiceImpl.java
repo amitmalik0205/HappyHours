@@ -36,4 +36,9 @@ public class DealServiceImpl implements DealService {
 	public Deal getDealByID(Long dealID) {
 		return dealDao.getDealByID(dealID);
 	}
+	
+	@Override
+	public void delete(Deal deal) {
+		dealDao.delete(deal);
+	}
 }

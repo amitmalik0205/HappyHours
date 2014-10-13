@@ -13,4 +13,6 @@ public interface DealService {
 	boolean saveDeal(Deal deal);
 	
 	public Deal getDealByID(Long dealID);
+	
+	public void delete(Deal deal);
 }

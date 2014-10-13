@@ -60,7 +60,7 @@ public class HappyHoursUtil {
 				+ "/" + path;
 	}
 	
-	public static String uploadImageOnServer(InputStream in, Long dealID) throws IOException, FileNotFoundException {
+	public static String uploadImageOnServer(InputStream in, String randomFolderName) throws IOException, FileNotFoundException {
 
 		FileOutputStream fOut = null;
 		Date date = new Date();
@@ -69,7 +69,7 @@ public class HappyHoursUtil {
 		String rootFolderPath = createRootFolder();
 		
 		// Make deal folder to save images if not there.
-		String dealFolderPath = rootFolderPath + "/" + dealID.toString();
+		String dealFolderPath = rootFolderPath + "/" + randomFolderName;
 		createDealFolder(dealFolderPath);
 		
 		String convertedImageName = (new Long(date.getTime())).toString()+ ".jpg";

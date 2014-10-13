@@ -99,4 +99,23 @@ public class DealDaoImpl extends GenericDaoImpl<User, Long> implements DealDao {
 		}
 		return deal;
 	}
+	
+	@Override
+	public void delete(Deal deal) {
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSessionFactory().openSession();
+			transaction = session.beginTransaction();
+			session.delete(deal);
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			e.printStackTrace();
+			logger.fatal(HappyHoursUtil.getExceptionDescriptionString(e));
+		} finally {
+			session.flush();
+			session.close();
+		}
+	}
 }
