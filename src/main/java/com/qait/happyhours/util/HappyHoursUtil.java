@@ -72,7 +72,9 @@ public class HappyHoursUtil {
 		String dealFolderPath = rootFolderPath + "/" + randomFolderName;
 		createDealFolder(dealFolderPath);
 		
-		String convertedImageName = (new Long(date.getTime())).toString()+ ".jpg";
+		//String convertedImageName = (new Long(date.getTime())).toString()+ ".jpg";
+		
+		String convertedImageName = getAuthToken() + ".jpg";
 		
 		String storagePath = dealFolderPath + "/" + convertedImageName;
 		

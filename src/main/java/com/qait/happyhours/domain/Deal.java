@@ -81,7 +81,7 @@ public class Deal implements Serializable {
 	@Column(name = "deal_type", unique = false, nullable = false)
 	private Boolean dealType;
 
-	@Column(name = "isExpired", unique = false, nullable = false)
+	@Column(name = "isExpired")
 	private Boolean isExpired;
 
 	@Transient
