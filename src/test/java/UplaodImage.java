@@ -16,6 +16,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qait.happyhours.domain.Category;
 import com.qait.happyhours.domain.Deal;
 import com.qait.happyhours.domain.DealOffers;
 
@@ -33,6 +34,10 @@ public class UplaodImage {
 		
 	   dealOffersList.add(dealOffers);
 	   dealOffersList.add(dealOffers2);
+	   
+	   Category category = new Category();
+	   category.setCategoryID(new Long(1));
+	   category.setCategoryName("Luxury Bars");
 		
        Deal deal = new Deal();		
        deal.setDealOffersList(dealOffersList);
@@ -47,6 +52,7 @@ public class UplaodImage {
        deal.setSubTitle("My Deal Test Sub Title");
        deal.setIsExpired(false);
        deal.setLocation("Gurgaon");
+       deal.setDealCategory(category);
        
        String startDateString = "15-10-2014 15:00:00";
        DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"); 
@@ -73,16 +79,16 @@ public class UplaodImage {
        String dealJSON = mapper.writeValueAsString(deal);
 
 	   HttpClient httpclient = HttpClientBuilder.create().build();
-	   HttpPost httppost = new HttpPost("http://172.16.9.35:8081/happyhours/rest/happy-hours-service/save-deal");
+	   HttpPost httppost = new HttpPost("http://localhost:8081/happyhours/rest/happy-hours-service/save-deal");
 	   
 	   try {
 		   
 		   MultipartEntityBuilder multipart = MultipartEntityBuilder.create();
 		   multipart.addPart("deal", new StringBody(dealJSON));
-		   multipart.addPart("mainImage", new FileBody(new File("C:\\Amit\\Photos\\DSC00501.jpg")));
-		   multipart.addPart("images", new FileBody(new File("C:\\Amit\\Photos\\DSCN5910.jpg")));
-		   multipart.addPart("images", new FileBody(new File("C:\\Amit\\Photos\\DSC00499.jpg")));
-		   multipart.addPart("images", new FileBody(new File("C:\\Amit\\Photos\\DSC00500.jpg")));
+		   multipart.addPart("mainImage", new FileBody(new File("C:\\happyhours_data\\deal_images\\4.png")));
+		   multipart.addPart("images", new FileBody(new File("C:\\happyhours_data\\deal_images\\2.png")));
+		   multipart.addPart("images", new FileBody(new File("C:\\happyhours_data\\deal_images\\3.png")));
+		   multipart.addPart("images", new FileBody(new File("C:\\happyhours_data\\deal_images\\1.png")));
 		   
 		   HttpEntity entity2 = multipart.build();
 		   httppost.setEntity(entity2);

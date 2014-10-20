@@ -1,6 +1,5 @@
 package com.qait.happyhours.rest.service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,14 +21,14 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qait.happyhours.domain.Category;
 import com.qait.happyhours.domain.Deal;
 import com.qait.happyhours.domain.DealImages;
 import com.qait.happyhours.domain.User;
 import com.qait.happyhours.dto.SendPasswordDTO;
 import com.qait.happyhours.enums.EmailType;
+import com.qait.happyhours.service.CategoryService;
 import com.qait.happyhours.service.DealService;
 import com.qait.happyhours.service.UserService;
 import com.qait.happyhours.util.EmailUtil;
@@ -235,6 +234,8 @@ public class HappyHoursService {
 	public Response saveImage(FormDataMultiPart multiPart) {
 		
 		DealService dealService = (DealService) appContext.getBean("dealService");
+		CategoryService categoryService = (CategoryService) appContext
+				.getBean("categoryService");
 		
 		boolean isError = false;
 		String imageName = null;
@@ -309,6 +310,9 @@ public class HappyHoursService {
 		    	
 		    	dealObj.setDealImagesList(dealImagesList);
 		    	
+		    	Category category = categoryService.loadCategoryID(dealObj.getDealCategory().getCategoryID());
+		    	dealObj.setDealCategory(category);
+		    	
 		    	boolean dealSaved = dealService.saveDeal(dealObj);
 
 				if (dealSaved) {
@@ -324,5 +328,26 @@ public class HappyHoursService {
 		}
 	    
 		return Response.status(200).entity(response).build();
+	}
+	
+	@GET
+	@Path("get-category-list")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCategoryList() {
+		HappyHoursServiceResponse response = new HappyHoursServiceResponse();
+		
+		CategoryService categoryService = (CategoryService) appContext
+				.getBean("categoryService");
+		List<Category> list = categoryService.getCategoryList();
+		
+		if (list == null) {
+			response.setMessage(HappyHoursPropertiesFileReaderUtil
+					.getPropertyValue("getCategoryList001"));
+			response.setCode("getCategoryList001");
+			return Response.status(200).entity(response).build();
+		} else {
+			return Response.status(200).entity(list).build();
+		}
 	}
 }

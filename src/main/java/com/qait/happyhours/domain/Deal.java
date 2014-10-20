@@ -7,9 +7,11 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -89,6 +91,10 @@ public class Deal implements Serializable {
 
 	@Transient
 	private Double requiredDistance;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="category_id")
+	private Category dealCategory;
 
 	public Double getRequiredDistance() {
 		return requiredDistance;
@@ -240,5 +246,13 @@ public class Deal implements Serializable {
 
 	public void setSubTitle(String subTitle) {
 		this.subTitle = subTitle;
+	}
+
+	public Category getDealCategory() {
+		return dealCategory;
+	}
+
+	public void setDealCategory(Category dealCategory) {
+		this.dealCategory = dealCategory;
 	}
 }
