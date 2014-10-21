@@ -92,8 +92,9 @@ public class Deal implements Serializable {
 	@Transient
 	private Double requiredDistance;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="category_id")
+	@Fetch(FetchMode.JOIN)
 	private Category dealCategory;
 
 	public Double getRequiredDistance() {
